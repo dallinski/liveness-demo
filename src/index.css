@@ -1,0 +1,19 @@
+body {
+    color: darkblue;
+}
+
+video {
+    width: 400px;
+    height: 700px;
+    object-fit: cover;
+}
+
+button {
+    height: 100px;
+    width: 400px;
+    font-size: 50px;
+}
+
+.liveness_info {
+    font-size: 30px;
+}
