@@ -21,4 +21,13 @@ When your webapp is running, run `ngrok http 3030 --host-header="localhost:3030"
 
 When starting a liveness session, the video element temporarily shows a black screen.
 
-[![See the problem](./demo_in_action.mov)](./demo_in_action.mov)
+<table>
+  <tr>
+    <td>The problem</td>
+     <td>Full Liveness Session</td>
+  </tr>
+  <tr>
+    <td><img src="./problem.gif"></td>
+    <td><img src="./demo_in_action.gif"></td>
+  </tr>
+</table>
