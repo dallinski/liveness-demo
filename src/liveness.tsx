@@ -38,6 +38,7 @@ const LIVENESS_STEP_TOTAL_DURATION_TIMEOUT_SECONDS = 30.0; // How long to wait b
 
 export const LivenessDemo: React.VFC = () => {
   const videoElem = useRef<HTMLVideoElement>(null);
+  const previewElem = useRef<HTMLVideoElement>(null);
   const [videoMounting, setVideoMounting] = useState(false);
 
   const [
@@ -153,7 +154,7 @@ export const LivenessDemo: React.VFC = () => {
   };
 
   useEffect(() => {
-    const mount = async (video: HTMLVideoElement) => {
+    const mount = async (preview: HTMLVideoElement, video: HTMLVideoElement) => {
       const outcome = await requestCamera();
       if (outcome.kind === "failed") {
         onPermissionDenied();
@@ -162,24 +163,29 @@ export const LivenessDemo: React.VFC = () => {
 
       onPermissionGranted();
 
-      video.srcObject = outcome.stream;
+      preview.srcObject = outcome.stream;
+      video.srcObject = outcome.stream.clone();
       video.onloadedmetadata = () => {
         video.play();
       };
     };
 
+    if (!previewElem.current) {
+      throw new Error("No previewElem to mount to?");
+    }
+
     if (!videoElem.current) {
-      throw new Error("No video element to mount to?");
+      throw new Error("No videoElem to mount to?");
     }
 
     if (!videoMounting) {
       setVideoMounting(true);
-      mount(videoElem.current);
+      mount(previewElem.current, videoElem.current);
     }
 
     return () => {
-      const video = videoElem.current;
-      if (!video) throw new Error("No current videoElem on cleanup?");
+      const video = previewElem.current;
+      if (!video) throw new Error("No current previewElem on cleanup?");
 
       const stream = video.srcObject as MediaStream | null;
       // If there is no stream, we probably mounted and unmounted quickly
@@ -188,17 +194,31 @@ export const LivenessDemo: React.VFC = () => {
 
       video.srcObject = null;
     };
-  }, [videoElem.current, videoMounting]);
+  }, [previewElem.current, videoElem.current, videoMounting]);
 
   return (
     <div>
       <h1>Liveness Demo</h1>
-      <video
-        data-private
-        playsInline
-        autoPlay
-        ref={videoElem}
-      />
+      <div className="video-container">
+        <div className="video-and-label">
+          <h2>Preview</h2>
+          <video
+            data-private
+            playsInline
+            autoPlay
+            ref={previewElem}
+          />
+        </div>
+        <div className="video-and-label">
+          <h2>Used for Liveness Streaming</h2>
+          <video
+            data-private
+            playsInline
+            autoPlay
+            ref={videoElem}
+          />
+        </div>
+      </div>
       {!ocrLabsSessionId && (
         <div>
           <button onClick={() => createOCRLabsSession()} disabled={!readyToTestLiveness}>Start liveness</button>

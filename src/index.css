@@ -17,3 +17,17 @@ button {
 .liveness_info {
     font-size: 30px;
 }
+
+.video-container {
+    display: flex;
+}
+
+
+.video-and-label {
+    display: flex;
+    flex-direction: column;
+}
+
+.video-and-label h2 {
+    text-align: center;
+}
